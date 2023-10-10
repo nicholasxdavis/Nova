@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blacnova WebP To PNG</title>
+    <meta http-equiv="Content-Security-Policy" content="script-src 'self';">
+
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 350px;
+            width: 350px;
+        }
+
+        #logo {
+            text-align: center;
+            margin-bottom: 10px;
+            width: 500px;
+            height: 100px;
+        }
+        
+        #miniLogo {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            width: 30px; /* Adjust the width as needed */
+            height: 30px; /* Adjust the height as needed */
+        }
+
+        .header {
+            padding-top: 0.5px;
+            text-align: center;
+        }
+
+        /* Add styles for the version info */
+        #versionInfo {
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            font-size: 12px;
+            color: #666;
+        }
+
+        .header h2 {
+            font-size: 15px;
+            font-family: 'GILC', sans-serif;
+        }
+
+        .button {
+            display: inline-block;
+            padding: 12px 24px;
+            font-size: 18px;
+            font-weight: bold;
+            text-align: center;
+            text-decoration: none;
+            color: #8A2BE2;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s, color 0.3s;
+            margin-top: 5px;
+        }
+
+        .button:hover {
+            background-color: #bc78f6;
+        }
+
+        #downloadButton {
+            background-color: #FFFFFF;
+            border: 2px solid #8A2BE2;
+        }
+
+        #downloadButton:hover {
+            background-color: #bc78f6;
+        }
+
+        #downloadButton:disabled {
+            background-color: #ddd;
+            color: #8A2BE2;
+            border: 2px solid #ddd;
+            cursor: not-allowed;
+        }
+
+        #outputImage {
+            max-width: 100px;
+            max-height: 100px;
+            height: auto;
+            margin-top: 20px;
+            display: none;
+            cursor: pointer; /* Add cursor pointer to indicate it's clickable */
+            transition: transform 0.3s ease-in-out; /* Add transition for smooth zoom effect */
+        }
+
+        #outputImage:hover {
+            transform: scale(1.2); /* Adjust the scale factor for zooming in */
+        }
+
+        .disabledText {
+            color: #666;
+            pointer-events: none; /* Disable pointer events on the text */
+        }
+
+        .chooseFileButton {
+            display: inline-block;
+            padding: 12px 9px;
+            font-size: 18px;
+            font-weight: bold;
+            text-align: center;
+            text-decoration: none;
+            background-color: #FFFFFF;
+            color: #8A2BE2;
+            border: 2px solid #8A2BE2;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s, color 0.3s;
+            margin-top: 5px;
+        }
+
+        .chooseFileButton:hover {
+            background-color: #bc78f6;
+        }
+
+        @keyframes eraseAndType {
+            0% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0;
+            }
+
+            100% {
+                opacity: 1;
+            }
+        }
+
+        #webpToPngText.animateText {
+            animation: eraseAndType 0.5s ease-in-out;
+        }
+
+        #fileInput {
+            display: none;
+        }
+
+        #authorInfo {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            font-size: 12px;
+            color: #666;
+        }
+
+        label {
+            display: inline;
+            color: #8A2BE2;
+            cursor: pointer;
+            margin-top: 5px;
+            margin-right: 5px; /* Add a little margin to separate it from the dropdown */
+        }
+		
+    </style>
+</head>
+
+<body>
+    <img src="./icons/main.png" alt="NOVA" width="100" height="100" id="logo">
+    <img src="./icons/icon128.png" alt="NOVA" width="50" height="50" id="miniLogo">
+    <div class="header">
+        <label for="formatSelect">Output Format:</label>
+        <select id="formatSelect">
+            <option value="png">PNG</option>
+            <option value="jpg">JPG</option>
+            <option value="jpeg">JPEG</option>
+        </select>
+        <h2 id="webpToPngText">WebP to PNG</h2>
+
+        <label for="fileInput" class="chooseFileButton">Choose File</label>
+        <input type="file" id="fileInput" accept=".webp">
+        <button id="downloadButton" class="button" disabled>Download</button>
+        <br>
+        <img id="outputImage" alt="Converted PNG">
+    </div>
+    <div id="versionInfo">Version 1.0</div>
+    <div id="authorInfo">By Nicholas Davis</div>
+    <!-- Include your script.js -->
+    <script src="script.js"></script>
+</body>
+
+</html>
