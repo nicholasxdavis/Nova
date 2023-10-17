@@ -1,126 +1,264 @@
 document.addEventListener("DOMContentLoaded", function () {
     const downloadButton = document.getElementById("downloadButton");
     const webpToPngText = document.getElementById("webpToPngText");
+    const formatSelect = document.getElementById("formatSelect");
+    const fileInput = document.getElementById("fileInput");
+    const outputImage = document.getElementById("outputImage");
 
-    // Disable the download button and the text initially
     downloadButton.disabled = true;
     webpToPngText.classList.add("disabledText");
 
-    const fileInput = document.getElementById("fileInput");
+    fileInput.addEventListener("change", handleFileSelection);
 
-    fileInput.addEventListener("change", function () {
-        console.log("File input change event fired");
-        handleFileSelection();
-    });
+    downloadButton.addEventListener("click", downloadConvertedImage);
 
-    downloadButton.addEventListener("click", function () {
-        console.log("Download button click event fired");
-        downloadConvertedImage();
-    });
+    let convertedBlob;
 
-    let convertedBlob; // Variable to store the converted image blob
-	
-	 const supportedFormats = ['AVIF', 'SVG', 'PDF'];
-
-    // Initial format index
+    const supportedFormats = ['AVIF', 'SVG', 'PDF'];
     let currentFormatIndex = 0;
 
-    // Function to change the text
     function changeFormatText() {
-    const nextFormatIndex = (currentFormatIndex + 1) % supportedFormats.length;
-    const currentFormat = supportedFormats[currentFormatIndex];
-    const nextFormat = supportedFormats[nextFormatIndex];
+        const nextFormatIndex = (currentFormatIndex + 1) % supportedFormats.length;
+        const currentFormat = supportedFormats[currentFormatIndex];
+        const nextFormat = supportedFormats[nextFormatIndex];
 
-    // Add class to initiate the fade-out animation
-    webpToPngText.classList.add("fadeOut");
+        const darkModePreference = localStorage.getItem('darkMode');
+        const isDarkMode = darkModePreference === 'dark';
+        const isLightMode = darkModePreference === 'light-mode';
 
-    // Set a timeout to update the text and remove the fade-out class after the fade-out animation
-    setTimeout(() => {
-        // Update the text
-        webpToPngText.innerHTML = `<span class="currentFormat">${nextFormat}</span> to PNG`;
+        webpToPngText.classList.toggle("dark-mode-text", isDarkMode);
+        webpToPngText.classList.add("erase");
 
-        // Force a reflow to apply the changes immediately
-        void webpToPngText.offsetWidth;
+        setTimeout(() => {
+            webpToPngText.innerHTML = `<span class="currentFormat">${nextFormat.toUpperCase()}</span> to ${formatSelect.value.toUpperCase()}`;
 
-        // Remove the fade-out class
-        webpToPngText.classList.remove("fadeOut");
+            setTimeout(() => {
+                webpToPngText.classList.remove("erase");
+                webpToPngText.classList.add("type");
 
-        // Increment the format index
-        currentFormatIndex = nextFormatIndex;
-    }, 500); // Adjust the time based on your preference
-}
+                if (isDarkMode) {
+                    webpToPngText.classList.add("dark-mode-text");
+                }
 
-// Set an interval to change the text every 3 seconds (adjust as needed)
-setInterval(changeFormatText, 3000);
-	
+                setTimeout(() => {
+                    webpToPngText.classList.remove("type");
+
+                    if (isLightMode) {
+                        setTimeout(() => {
+                            webpToPngText.classList.remove("dark-mode-text");
+                        }, 0);
+                    }
+
+                    currentFormatIndex = nextFormatIndex;
+                }, 500);
+            }, 10);
+        }, 500);
+    }
+
+    setInterval(changeFormatText, 4000);
+
+    const logoContainer = document.getElementById("logo-container");
+    const logo2 = document.getElementById("logo2");
+    const logo = document.getElementById("logo");
+    const whitelogoContainer = document.getElementById("whitelogo-container");
+    const wlogo2 = document.getElementById("wlogo2");
+    const wlogo = document.getElementById("wlogo");
+    const darkIcon = document.getElementById('dark');
+    const lightIcon = document.getElementById('light');
+
+    const darkModePreference = localStorage.getItem('darkMode');
+
+    if (darkModePreference === 'dark') {
+        applyDarkMode();
+    } else {
+        applyLightMode();
+    }
+
+    logoContainer.addEventListener("mouseenter", () => {
+        logo2.style.display = "block";
+        wlogo2.style.display = "none";
+    });
+
+    logoContainer.addEventListener("mouseleave", () => {
+        logo2.style.display = "none";
+    });
+
+    whitelogoContainer.addEventListener("mouseenter", () => {
+        wlogo2.style.display = "block";
+        logo2.style.display = "none";
+    });
+
+    whitelogoContainer.addEventListener("mouseleave", () => {
+        wlogo2.style.display = "none";
+    });
+
+    darkIcon.addEventListener('click', applyDarkMode);
+    lightIcon.addEventListener('click', applyLightMode);
+
+    function applyDarkMode() {
+        darkIcon.style.display = 'none';
+        lightIcon.style.display = 'inline-block';
+        document.body.classList.add('dark-mode');
+        document.body.classList.remove('light-mode');
+        whitelogoContainer.style.display = 'block';
+        logoContainer.style.display = 'none';
+        darkIcon.style.display = 'none';
+        lightIcon.style.display = 'inline-block';
+        webpToPngText.classList.add("dark-mode-text");
+        localStorage.setItem('darkMode', 'dark');
+    }
+
+    function applyLightMode() {
+        lightIcon.style.display = 'none';
+        darkIcon.style.display = 'inline-block';
+        document.body.classList.add('light-mode');
+        document.body.classList.remove('dark-mode');
+        whitelogoContainer.style.display = 'none';
+        logoContainer.style.display = 'block';
+        lightIcon.style.display = 'none';
+        darkIcon.style.display = 'inline-block';
+        webpToPngText.classList.remove("dark-mode-text");
+        localStorage.setItem('darkMode', 'light');
+    }
+
+    let conversionStartTime;
 
     async function handleFileSelection() {
-        const fileInput = document.getElementById("fileInput");
-        const downloadButton = document.getElementById("downloadButton");
-        const outputImage = document.getElementById("outputImage");
-        const webpToPngText = document.getElementById("webpToPngText");
-        const formatSelect = document.getElementById("formatSelect");
+    downloadButton.disabled = true;
+    webpToPngText.classList.add("disabledText");
+    webpToPngText.style.display = "none";
 
-        downloadButton.disabled = true;
-        webpToPngText.classList.add("disabledText");
-        webpToPngText.style.display = "none";
+    const file = fileInput.files[0];
 
-        const file = fileInput.files[0];
-        const selectedFormat = formatSelect.value;
+    if (file && (file.type === "image/webp" || file.type === "image/avif" || file.type === "image/svg+xml")) {
+        try {
+            console.log("Starting conversion...");
+            conversionStartTime = performance.now();
 
-        if (file && (file.type === "image/webp" || file.type === "image/avif")) {
-            try {
-                console.log("Starting conversion...");
+            let blob;
 
-                const imageBitmap = await createImageBitmap(file);
-                
-                const canvas = document.createElement("canvas");
-                canvas.width = imageBitmap.width;
-                canvas.height = imageBitmap.height;
-                const ctx = canvas.getContext("2d");
-                ctx.drawImage(imageBitmap, 0, 0);
-
-                const dataURL = canvas.toDataURL(`image/${selectedFormat}`);
-
-                const blob = await fetch(dataURL).then(res => res.blob());
-
-                convertedBlob = blob;
-                displayConvertedImage(convertedBlob);
-
-                downloadButton.disabled = false;
-                webpToPngText.classList.remove("disabledText");
-                webpToPngText.style.display = "block";
-            } catch (error) {
-                console.error("Conversion failed:", error);
-                alert("Conversion failed. Please try again.");
-                fileInput.value = "";
-                outputImage.style.display = "none";
+            if (file.type === "image/svg+xml") {
+                blob = new Blob([file], { type: "image/svg+xml" });
+            } else {
+                const dataURL = await readFileAsDataURL(file);
+                const convertedData = await convertToPNG(dataURL);
+                blob = new Blob([convertedData], { type: "image/png" });
             }
-        } else {
-            alert("Please select a valid WebP or AVIF file.");
+
+            convertedBlob = blob;
+            displayConvertedImage(convertedBlob);
+
+            downloadButton.disabled = false;
+            webpToPngText.style.display = "block";
+            const conversionEndTime = performance.now();
+            const conversionTime = conversionEndTime - conversionStartTime;
+            console.log("Conversion took " + conversionTime.toFixed(2) + " milliseconds");
+            webpToPngText.classList.add("display-text");
+            webpToPngText.innerHTML = `Conversion took ${conversionTime.toFixed(2)} milliseconds`;
+        } catch (error) {
+            console.error("Conversion failed:", error);
+            alert("Conversion failed. Please try again.");
             fileInput.value = "";
             outputImage.style.display = "none";
         }
+    } else {
+        alert("Please select a valid WebP, AVIF, or SVG file.");
+        fileInput.value = "";
+        outputImage.style.display = "none";
     }
+}
+
+async function convertToPNG(dataURL) {
+    const response = await fetch(dataURL);
+    const blob = await response.blob();
+
+    return new Promise((resolve, reject) => {
+        const img = new Image();
+
+        img.onload = function () {
+            const canvas = document.createElement('canvas');
+            const context = canvas.getContext('2d');
+
+            // Set canvas dimensions to image dimensions
+            canvas.width = img.width;
+            canvas.height = img.height;
+
+            // Draw the image on the canvas
+            context.drawImage(img, 0, 0);
+
+            // Convert the canvas content to a PNG blob
+            canvas.toBlob(
+                (blob) => {
+                    resolve(blob);
+                },
+                'image/png',
+                1 // Quality (from 0 to 1)
+            );
+        };
+
+        img.onerror = function (error) {
+            reject(error);
+        };
+
+        img.src = URL.createObjectURL(blob);
+    });
+}
 
     function displayConvertedImage(imageBlob) {
         console.log("Displaying converted image...");
-        const outputImage = document.getElementById("outputImage");
-
-        // Set the source of the output image
         outputImage.src = URL.createObjectURL(imageBlob);
+        outputImage.style.cursor = "pointer";
+        outputImage.style.display = "inline";
+        const miniLogo = document.getElementById("miniLogo");
+        miniLogo.style.display = "none";
 
-        // Show the output image
-        outputImage.style.display = "inline"; // or "inline-block" or "block"
+        outputImage.addEventListener("click", openImageViewer);
     }
 
-    function downloadConvertedImage() {
-        console.log("Downloading converted image...");
-        if (convertedBlob) {
-            const downloadLink = document.createElement("a");
-            downloadLink.href = URL.createObjectURL(convertedBlob);
-            downloadLink.download = "converted_image." + formatSelect.value;
-            downloadLink.click();
+    function openImageViewer() {
+        const viewerWindow = window.open(outputImage.src, "_blank");
+
+        if (!viewerWindow || viewerWindow.closed || typeof viewerWindow.closed === "undefined") {
+            alert("Popup blocked. Please allow popups for this site to view the image.");
         }
     }
+
+    async function readFileAsDataURL(file) {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = () => resolve(reader.result);
+            reader.onerror = reject;
+            reader.readAsDataURL(file);
+        });
+    }
+
+     function downloadConvertedImage() {
+        console.log("Downloading converted image...");
+        if (convertedBlob) {
+            try {
+                const downloadLink = document.createElement("a");
+                downloadLink.href = URL.createObjectURL(convertedBlob);
+
+                // Set the appropriate file extension based on the selected format
+                const fileExtension = formatSelect.value.toLowerCase();
+                downloadLink.download = `converted_image.${fileExtension}`;
+
+                // Trigger the download
+                downloadLink.click();
+
+                // Clean up
+                URL.revokeObjectURL(downloadLink.href);
+
+                // Update the display text
+                webpToPngText.classList.add("display-text");
+                webpToPngText.innerHTML = `File Saved`;
+            } catch (error) {
+                console.error("Error during download:", error);
+                alert("Error during download. Please try again.");
+            }
+        }
+    }
+
+    // ... (unchanged part)
+
 });
