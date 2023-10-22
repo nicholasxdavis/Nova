@@ -6,7 +6,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Blacnova WebP To PNG</title>
-    <meta http-equiv="Content-Security-Policy" content="script-src 'self';">
+	<meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-eval';">
     <style>
         body {
             --primary-bg-color: #FFFFFF;
@@ -325,17 +325,21 @@
         <h2 id="webpToPngText">WebP to PNG</h2>
 
         <label for="fileInput" class="chooseFileButton">Choose File</label>
-        <input type="file" id="fileInput" accept=".webp">
+        <input type="file" id="fileInput" accept="image/webp, image/avif, application/pdf, image/svg+xml">
         <button id="downloadButton" class="button" disabled>Download</button>
         <br>
         <img id="outputImage" alt="Converted PNG">
     </div>
 
     <div id="versionInfo">Version 1.1</div>
+	<a href="https://www.blacnova.store/pages/development" target="_blank">
     <div id="authorInfo">By BLACNOVA</div>
 
     <!-- Include your script.js -->
     <script src="script.js"></script>
+	<script src="pdf.js"></script>
+	<script src="pdf.worker.js"></script>
+
 	
 </body>
 
